@@ -13,6 +13,7 @@ public class SistemaPedidos {
     public static void main(String[] args) {
         SistemaPedidos sistema = new SistemaPedidos();
         sistema.inicializarSistema();
+
         Scanner scanner = new Scanner(System.in);
         char opcao;
 
@@ -91,6 +92,7 @@ public class SistemaPedidos {
         pedido.setId(idPedidoAtual);
         pedido.setCliente(cliente);
         pedido.setProduto(produto);
+        pedido.setStatusPedido("Em Produção");
         System.out.print("Forma de Pagamento: ");
         pedido.setFormaPagamento(scanner.nextLine());
 
@@ -170,7 +172,7 @@ public class SistemaPedidos {
 
     private Pedido buscarPedidoPorId(int id) {
         for (Pedido pedido : pedidos) {  
-            if (pedido.getId() == id) {
+            if (pedido.getId() == id) {// Verifica se o ID do pedido corresponde ao ID fornecido    
                 return pedido;
             }
         }
@@ -244,13 +246,13 @@ public class SistemaPedidos {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PEDIDOS_DIR + pedido.getId() + ".txt"))) {
             int mesAtual = LocalDate.now().getDayOfMonth();
             writer.write("Mês: " + mesAtual + "\n");
-            writer.write(pedido.getId() + "\n");
-            writer.write(pedido.getCliente().getNome() + "\n");
-            writer.write(pedido.getCliente().getEndereco() + "\n");
-            writer.write(pedido.getProduto().getDescricao() + "\n");
-            writer.write(pedido.getCliente().getEmail() + "\n");
-            writer.write(pedido.getCliente().getTelefone() + "\n");
-            writer.write(pedido.getFormaPagamento() + "\n");
+            writer.write("ID: " + pedido.getId() + "\n");
+            writer.write("Nome: " + pedido.getCliente().getNome() + "\n");
+            writer.write("Endereço: " + pedido.getCliente().getEndereco() + "\n");
+            writer.write("Descrição: " + pedido.getProduto().getDescricao() + "\n");
+            writer.write("Email: " + pedido.getCliente().getEmail() + "\n");
+            writer.write("Telefone: " + pedido.getCliente().getTelefone() + "\n");
+            writer.write("Pagamento: " + pedido.getFormaPagamento() + "\n");
             writer.write(pedido.isPago() ? "Pago\n" : "Não Pago\n");
         } catch (IOException e) {
             System.out.println("Erro ao salvar o pedido: " + e.getMessage());
