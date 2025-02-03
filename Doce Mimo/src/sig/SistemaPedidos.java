@@ -57,21 +57,7 @@ public class SistemaPedidos {
         }
     }
 
-    private int carregarUltimoId() {
-        File arquivo = new File("sig/ultimoId.txt");
-    
-        // Se o arquivo não existir, retorna 1 como ID inicial
-        if (!arquivo.exists()) {
-            return 1;
-        }
-    
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            return Integer.parseInt(reader.readLine()); // Lê o ID salvo no arquivo
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("Erro ao carregar o ID: " + e.getMessage());
-            return 1; // Se houver erro, retorna 1 como fallback
-        }
-    }
+   
 
     private char menu() {
         Scanner scanner = new Scanner(System.in);
@@ -261,8 +247,8 @@ public class SistemaPedidos {
         // Salva o pedido em um arquivo de texto
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PEDIDOS_DIR + pedido.getId() + ".txt"))) {
             int mesAtual = LocalDate.now().getDayOfMonth();
-            writer.write("Mês: " + mesAtual + "\n");
-            writer.write("ID: " + pedido.getId() + "\n");
+           // writer.write("Mês: " + mesAtual + "\n");
+            writer.write(pedido.getId() + "\n");
             writer.write("Nome: " + pedido.getCliente().getNome() + "\n");
             writer.write("Endereço: " + pedido.getCliente().getEndereco() + "\n");
             writer.write("Descrição: " + pedido.getProduto().getDescricao() + "\n");
@@ -274,4 +260,20 @@ public class SistemaPedidos {
             System.out.println("Erro ao salvar o pedido: " + e.getMessage());
         }
     }   
+
+    private int carregarUltimoId() {
+        File arquivo = new File("sig/ultimoId.txt");
+    
+        // Se o arquivo não existir, retorna 1 como ID inicial
+        if (!arquivo.exists()) {
+            return 1;
+        }
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            return Integer.parseInt(reader.readLine()); // Lê o ID salvo no arquivo
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Erro ao carregar o ID: " + e.getMessage());
+            return 1; // Se houver erro, retorna 1 como fallback
+        }
+    }
 }
