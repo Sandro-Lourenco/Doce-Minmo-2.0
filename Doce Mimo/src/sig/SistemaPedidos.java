@@ -142,6 +142,13 @@ public class SistemaPedidos {
             if (!novaDescricao.isEmpty()) {
                 pedido.getProduto().setDescricao(novaDescricao);
             }
+
+            System.out.println("Status Atual do Pedido: " + pedido.getStatusPedido());
+            System.out.print("Novo Status (pressione ENTER para manter): ");
+            String novoStatus = scanner.nextLine();
+            if (!novoStatus.isEmpty()) {
+                pedido.setStatusPedido(novoStatus);
+            }
     
             System.out.println("Endereço Atual: " + pedido.getCliente().getEndereco());
             System.out.print("Novo Endereço (pressione ENTER para manter): ");
