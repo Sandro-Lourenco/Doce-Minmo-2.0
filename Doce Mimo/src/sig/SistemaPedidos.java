@@ -264,7 +264,7 @@ public class SistemaPedidos {
     private int carregarUltimoId() {
         File arquivo = new File("sig/ultimoId.txt");
     
-        // Se o arquivo não existir, retorna 1 como ID inicial
+        // Se o arquivo não existir, retorna 1 
         if (!arquivo.exists()) {
             return 1;
         }
@@ -273,7 +273,7 @@ public class SistemaPedidos {
             return Integer.parseInt(reader.readLine()); // Lê o ID salvo no arquivo
         } catch (IOException | NumberFormatException e) {
             System.out.println("Erro ao carregar o ID: " + e.getMessage());
-            return 1; // Se houver erro, retorna 1 como fallback
+            return 1; //erro
         }
     }
 }

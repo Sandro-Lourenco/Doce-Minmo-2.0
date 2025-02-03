@@ -44,9 +44,11 @@ public class Pedido {
         this.formaPagamento = formaPagamento;
     }
 
-    // Métodos para Status do Pedido
     public String getStatusPedido() {
         return statusPedido;
+    }
+    public void setStatusPedido(String statusPedido) {
+        this.statusPedido = statusPedido;
     }
 
     private void atualizarStatus() {
@@ -68,14 +70,8 @@ public class Pedido {
         return "Pedido [ID: " + id + ", Cliente: " + cliente + ", Produto: " + produto + 
                ", Forma de Pagamento: " + formaPagamento + ", Status: " + statusPedido + "]";
     }
-
-    public void setEndereco(String novoEndereco) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setEndereco'");
-    }
-
-    public void setStatusPedido(String novoStatus) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStatusPedido'");
-    }
 }
+
+   
+
+  
