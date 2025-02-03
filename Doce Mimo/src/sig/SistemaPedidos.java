@@ -53,7 +53,23 @@ public class SistemaPedidos {
         if (!dir.exists()) {
             dir.mkdirs();// Cria o diretório
         } else {
-            idPedidoAtual = 1;
+            idPedidoAtual = carregarUltimoId();// Carrega o último ID de pedido 
+        }
+    }
+
+    private int carregarUltimoId() {
+        File arquivo = new File("sig/ultimoId.txt");
+    
+        // Se o arquivo não existir, retorna 1 como ID inicial
+        if (!arquivo.exists()) {
+            return 1;
+        }
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            return Integer.parseInt(reader.readLine()); // Lê o ID salvo no arquivo
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Erro ao carregar o ID: " + e.getMessage());
+            return 1; // Se houver erro, retorna 1 como fallback
         }
     }
 
@@ -162,13 +178,6 @@ public class SistemaPedidos {
             String novaFormaPagamento = scanner.nextLine();
             if (!novaFormaPagamento.isEmpty()) {
                 pedido.setFormaPagamento(novaFormaPagamento);
-            }
-    
-            System.out.println("Status Atual do Pedido: " + pedido.getStatusPedido());
-            System.out.print("Novo Status (pressione ENTER para manter): ");
-            String novoStatus = scanner.nextLine();
-            if (!novoStatus.isEmpty()) {
-                pedido.setStatusPedido(novoStatus);
             }
     
             System.out.println("\nPedido atualizado com sucesso!");
