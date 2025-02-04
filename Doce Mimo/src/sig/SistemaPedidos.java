@@ -74,7 +74,7 @@ public class SistemaPedidos {
 
     private void adicionarPedido() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\n🆕 Novo Pedido");
+        System.out.println("\nNovo Pedido");
     
         // Criar um novo cliente
         Cliente cliente = new Cliente();
@@ -89,8 +89,13 @@ public class SistemaPedidos {
     
         // Criar um novo produto
         Produto produto = new Produto();
-        System.out.print("Descrição do Produto: ");
-        produto.setDescricao(scanner.nextLine());
+        System.out.print("Sabor do Brigadeiro (Chocolate Branco, Café, Leite Ninho): ");
+        produto.setDescricao(scanner.nextLine().toLowerCase()); 
+    
+        System.out.print("Quantidade de Brigadeiros: ");
+        int quantidade = scanner.nextInt();
+        // Calcula o valor total do pedido
+        double valorTotal = quantidade * produto.getPRECO(); 
     
         // Criar um novo pedido
         Pedido pedido = new Pedido();
@@ -98,6 +103,7 @@ public class SistemaPedidos {
         pedido.setCliente(cliente);
         pedido.setProduto(produto);
         pedido.setStatusPedido("Em Produção");
+        pedido.setValorTotal(valorTotal);
         
         System.out.print("Forma de Pagamento: ");
         pedido.setFormaPagamento(scanner.nextLine());
@@ -235,51 +241,35 @@ public class SistemaPedidos {
     
 
     private void mostrarEstatisticasBrigadeiros() {
-        // Contadores de brigadeiros vendidos
         int totalBrigadeiros = 0;
-        int chocolateBranco = 0;
-        int cafe = 0;
-        int leiteNinho = 0;
-
-        // Obtém o mês atual
-        int mesAtual = LocalDate.now().getMonthValue();
-
+        int chocolateBranco = 0, cafe = 0, leiteNinho = 0;
+        double faturamentoTotal = 0;
+    
         for (Pedido pedido : pedidos) {
             String descricao = pedido.getProduto().getDescricao().toLowerCase();
+            int quantidade = (int) (pedido.getValorTotal() / 1.50); // 🔹 Calcula a quantidade com base no valor total
             
-            // Filtra pedidos de brigadeiro e conta os sabores
-            if (descricao.contains("brigadeiro")) {
-                totalBrigadeiros++;
-
-                if (descricao.contains("chocolate branco")) {
-                    chocolateBranco++;
-                } else if (descricao.contains("café")) {
-                    cafe++;
-                } else if (descricao.contains("leite ninho")) {
-                    leiteNinho++;
-                }
+            totalBrigadeiros += quantidade;
+            faturamentoTotal += pedido.getValorTotal();
+    
+            if (descricao.contains("chocolate branco")) {
+                chocolateBranco += quantidade;
+            } else if (descricao.contains("cafe")) {
+                cafe += quantidade;
+            } else if (descricao.contains("leite ninho")) {
+                leiteNinho += quantidade;
             }
         }
-
-        // Exibe estatísticas
-        System.out.println("\nEstatísticas de Vendas de Brigadeiros:");
-        System.out.println("Total de brigadeiros vendidos neste mês: " + totalBrigadeiros);
-        System.out.println("Chocolate Branco: " + chocolateBranco);
-        System.out.println("Café: " + cafe);
-        System.out.println("Leite Ninho: " + leiteNinho);
-
-        // Determina o sabor mais vendido
-        String saborMaisVendido;
-        if (chocolateBranco >= cafe && chocolateBranco >= leiteNinho) {
-            saborMaisVendido = "Chocolate Branco";
-        } else if (cafe >= chocolateBranco && cafe >= leiteNinho) {
-            saborMaisVendido = "Cafe";
-        } else {
-            saborMaisVendido = "Leite Ninho";
-        }
-
-        System.out.println("Sabor mais vendido: " + saborMaisVendido);
+    
+        System.out.println("\n📊 Estatísticas de Vendas de Brigadeiros:");
+        System.out.println("🔹 Total de brigadeiros vendidos: " + totalBrigadeiros);
+        System.out.printf("🔹 Faturamento Total: R$ %.2f\n", faturamentoTotal);
+        System.out.println("🔹 Brigadeiros por Sabor:");
+        System.out.println("   - Chocolate Branco: " + chocolateBranco);
+        System.out.println("   - Café: " + cafe);
+        System.out.println("   - Leite Ninho: " + leiteNinho);
     }
+    
 
     private void salvarPedido(Pedido pedido) {
         // Salva o pedido em um arquivo de texto
@@ -287,6 +277,7 @@ public class SistemaPedidos {
             int mesAtual = LocalDate.now().getDayOfMonth();
            // writer.write("Mês: " + mesAtual + "\n");
             writer.write(pedido.getId() + "\n");
+            writer.write(mesAtual + "\n");
             writer.write("Nome: " + pedido.getCliente().getNome() + "\n");
             writer.write("Endereço: " + pedido.getCliente().getEndereco() + "\n");
             writer.write("Descrição: " + pedido.getProduto().getDescricao() + "\n");

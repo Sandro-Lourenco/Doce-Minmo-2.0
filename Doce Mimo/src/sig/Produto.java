@@ -2,6 +2,7 @@ package sig;
 
 public class Produto {
     private String descricao;
+    private final double PRECO = 1.50;
 
     // Métodos para Descrição do Produto
     public String getDescricao() {
@@ -10,6 +11,14 @@ public class Produto {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public double getPRECO() {
+        return PRECO;
+    }
+
+    public double calcularPreco(int quantidade) {
+        return quantidade * PRECO;
     }
 
     @Override

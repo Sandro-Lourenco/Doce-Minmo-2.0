@@ -65,11 +65,20 @@ public class Pedido {
         atualizarStatus();
     }
 
+    public double setValorTotal(double valorTotal) {
+        return produto.getPRECO();
+    }
+
+    public double getValorTotal() {
+        return produto.getPRECO();
+    }
+
     @Override
     public String toString() {
         return "Pedido [ID: " + id + ", Cliente: " + cliente + ", Produto: " + produto + 
                ", Forma de Pagamento: " + formaPagamento + ", Status: " + statusPedido + "]";
     }
+
 }
 
    
