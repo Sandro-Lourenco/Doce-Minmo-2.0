@@ -53,11 +53,11 @@ public class SistemaPedidos {
         if (!dir.exists()) {
             dir.mkdirs();// Cria o diretório
         } else {
-            idPedidoAtual = carregarUltimoId();// Carrega o último ID de pedido 
+            
+            idPedidoAtual = carregarUltimoId(); // Carrega o último ID usado
+            carregarPedidos(); // Carrega os pedidos do diretório
         }
     }
-
-   
 
     private char menu() {
         Scanner scanner = new Scanner(System.in);
@@ -74,8 +74,9 @@ public class SistemaPedidos {
 
     private void adicionarPedido() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Novo Pedido");
-
+        System.out.println("\n🆕 Novo Pedido");
+    
+        // Criar um novo cliente
         Cliente cliente = new Cliente();
         System.out.print("Nome do Cliente: ");
         cliente.setNome(scanner.nextLine());
@@ -85,37 +86,55 @@ public class SistemaPedidos {
         cliente.setEmail(scanner.nextLine());
         System.out.print("Telefone do Cliente: ");
         cliente.setTelefone(scanner.nextLine());
-
+    
+        // Criar um novo produto
         Produto produto = new Produto();
         System.out.print("Descrição do Produto: ");
         produto.setDescricao(scanner.nextLine());
-
+    
+        // Criar um novo pedido
         Pedido pedido = new Pedido();
         pedido.setId(idPedidoAtual);
         pedido.setCliente(cliente);
         pedido.setProduto(produto);
         pedido.setStatusPedido("Em Produção");
+        
         System.out.print("Forma de Pagamento: ");
         pedido.setFormaPagamento(scanner.nextLine());
-
+    
         System.out.print("O pagamento foi realizado? (S/N): ");
         pedido.setPago(scanner.nextLine().equalsIgnoreCase("S"));
-
-        pedidos.add(pedido);// Adiciona o pedido à lista
+    
+        // Adicionar o pedido à lista e salvar no arquivo
         salvarPedido(pedido);
+        
+        // 🔹 Agora salvamos o último ID usado no sistema!
         idPedidoAtual++;
-       
-        System.out.println("Pedido adicionado com sucesso!");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("sig/ultimoId.txt"))) {
+            writer.write(String.valueOf(idPedidoAtual));
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar o ID: " + e.getMessage());
+        }
+    
+        System.out.println("\nPedido adicionado com sucesso! Pedido #" + pedido.getId());
     }
 
     private void listarPedidos() {
-        if (pedidos.isEmpty()) {
+        File dir = new File(PEDIDOS_DIR);
+        String[] arquivos = dir.list();
+    
+        if (arquivos == null || arquivos.length == 0) {
             System.out.println("Nenhum pedido encontrado.");
             return;
         }
-
-        for (Pedido pedido : pedidos) {
-            System.out.println(pedido);
+    
+        System.out.println("\n📜 Lista de Pedidos:");
+        for (String arquivo : arquivos) {
+            Pedido pedido = carregarPedido(arquivo);
+            if (pedido != null) {
+                System.out.println(pedido);
+            }
         }
     }
 
@@ -185,16 +204,35 @@ public class SistemaPedidos {
         Scanner scanner = new Scanner(System.in);
         System.out.print("ID do Pedido a ser removido: ");
         int id = scanner.nextInt();
+    
+        // Buscar o pedido na lista
+        Pedido pedidoParaRemover = null;
+        for (Pedido pedido : pedidos) {
+            if (pedido.getId() == id) {
+                pedidoParaRemover = pedido;
+                break;
+            }
+        }
 
-       // pedidos.removeIf(pedido -> pedido.getId() == id);// Remove o pedido da lista
-        File arquivo = new File(PEDIDOS_DIR + id + ".txt");// Cria o arquivo do pedido
-        // Verifica se o arquivo existe e se foi removido
-        if (arquivo.exists() && arquivo.delete()) {
-            System.out.println("Pedido removido com sucesso!");
+        //buscarPedidoPorId(id);
+    
+        // Se o pedido foi encontrado, remover da lista
+        if (pedidoParaRemover != null) {
+            pedidos.remove(pedidoParaRemover);
+            System.out.println("Pedido removido da lista.");
         } else {
-            System.out.println("Erro ao remover o arquivo do pedido.");
+            System.out.println("Pedido não encontrado na lista.");
+        }
+    
+        // Remover o arquivo do pedido
+        File arquivo = new File(PEDIDOS_DIR + id + ".txt");
+        if (arquivo.exists() && arquivo.delete()) {
+            System.out.println("Arquivo do pedido removido com sucesso!");
+        } else {
+            System.out.println("⚠ Erro ao remover o arquivo do pedido.");
         }
     }
+    
 
     private void mostrarEstatisticasBrigadeiros() {
         // Contadores de brigadeiros vendidos
@@ -261,7 +299,7 @@ public class SistemaPedidos {
         }
     }   
 
-    private int carregarUltimoId() {
+   private int carregarUltimoId() {
         File arquivo = new File("sig/ultimoId.txt");
     
         // Se o arquivo não existir, retorna 1 
@@ -275,5 +313,55 @@ public class SistemaPedidos {
             System.out.println("Erro ao carregar o ID: " + e.getMessage());
             return 1; //erro
         }
+    }
+
+    private void carregarPedidos() {
+        File dir = new File(PEDIDOS_DIR);
+        String[] arquivos = dir.list(); // Lista todos os arquivos da pasta
+    
+        if (arquivos != null) {
+            for (String arquivo : arquivos) {
+                Pedido pedido = carregarPedido(arquivo); // Lê cada pedido do arquivo
+                if (pedido != null) {
+                    pedidos.add(pedido); // Adiciona o pedido na lista
+                }
+            }
+        }
+    }
+
+    private Pedido carregarPedido(String arquivoNome) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(PEDIDOS_DIR + arquivoNome))) {
+            int id = Integer.parseInt(reader.readLine());
+            String nomeCliente = reader.readLine();
+            String enderecoCliente = reader.readLine();
+            String emailCliente = reader.readLine();
+            String telefoneCliente = reader.readLine();
+            String descricaoProduto = reader.readLine();
+            String formaPagamento = reader.readLine();
+            boolean pago = reader.readLine().equalsIgnoreCase("Pago");
+    
+            // Criar objetos Cliente e Produto com os dados lidos
+            Cliente cliente = new Cliente();
+            cliente.setNome(nomeCliente);
+            cliente.setEndereco(enderecoCliente);
+            cliente.setEmail(emailCliente);
+            cliente.setTelefone(telefoneCliente);
+    
+            Produto produto = new Produto();
+            produto.setDescricao(descricaoProduto);
+    
+            // Criar e configurar o objeto Pedido
+            Pedido pedido = new Pedido();
+            pedido.setId(id);
+            pedido.setCliente(cliente);
+            pedido.setProduto(produto);
+            pedido.setFormaPagamento(formaPagamento);
+            pedido.setPago(pago);
+    
+            return pedido;
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Erro ao carregar o pedido: " + e.getMessage());
+        }
+        return null;
     }
 }
