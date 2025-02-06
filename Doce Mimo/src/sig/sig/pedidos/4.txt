@@ -1,9 +1,0 @@
-4
-4
-Nome: Sandro
-Endereço: rua de tal
-Descrição: caf�
-Email: sandrocalebe8@gmail
-Telefone: 62 991860223
-Pagamento: 
-Pago

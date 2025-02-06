@@ -238,7 +238,7 @@ public class SistemaPedidos {
             System.out.println("⚠ Erro ao remover o arquivo do pedido.");
         }
     }
-    
+
 
     private void mostrarEstatisticasBrigadeiros() {
         int totalBrigadeiros = 0;
@@ -261,7 +261,7 @@ public class SistemaPedidos {
             }
         }
     
-        System.out.println("\n📊 Estatísticas de Vendas de Brigadeiros:");
+        System.out.println("\nEstatísticas de Vendas de Brigadeiros:");
         System.out.println("🔹 Total de brigadeiros vendidos: " + totalBrigadeiros);
         System.out.printf("🔹 Faturamento Total: R$ %.2f\n", faturamentoTotal);
         System.out.println("🔹 Brigadeiros por Sabor:");
@@ -270,7 +270,7 @@ public class SistemaPedidos {
         System.out.println("   - Leite Ninho: " + leiteNinho);
     }
     
-
+    // Salva o pedido em um arquivo de texto
     private void salvarPedido(Pedido pedido) {
         // Salva o pedido em um arquivo de texto
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PEDIDOS_DIR + pedido.getId() + ".txt"))) {
@@ -284,12 +284,13 @@ public class SistemaPedidos {
             writer.write("Email: " + pedido.getCliente().getEmail() + "\n");
             writer.write("Telefone: " + pedido.getCliente().getTelefone() + "\n");
             writer.write("Pagamento: " + pedido.getFormaPagamento() + "\n");
+            writer.write("Status do pedido" + pedido.getStatusPedido() + "\n");
             writer.write(pedido.isPago() ? "Pago\n" : "Não Pago\n");
         } catch (IOException e) {
             System.out.println("Erro ao salvar o pedido: " + e.getMessage());
         }
     }   
-
+    // Carrega o último ID usado no sistema
    private int carregarUltimoId() {
         File arquivo = new File("sig/ultimoId.txt");
     
@@ -305,7 +306,7 @@ public class SistemaPedidos {
             return 1; //erro
         }
     }
-
+    // Carrega os pedidos salvos no diretório
     private void carregarPedidos() {
         File dir = new File(PEDIDOS_DIR);
         String[] arquivos = dir.list(); // Lista todos os arquivos da pasta
@@ -313,7 +314,7 @@ public class SistemaPedidos {
         if (arquivos != null) {
             for (String arquivo : arquivos) {
                 Pedido pedido = carregarPedido(arquivo); // Lê cada pedido do arquivo
-                if (pedido != null) {
+                if (pedido != null) {   // Verifica se o pedido foi carregado com sucesso
                     pedidos.add(pedido); // Adiciona o pedido na lista
                 }
             }

@@ -1,9 +1,0 @@
-5
-4
-Nome: Sandro
-Endereço: rual
-Descrição: caf�
-Email: soijooijd
-Telefone: oijodijd
-Pagamento: 
-Pago
